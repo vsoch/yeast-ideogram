@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Yeast | Ideogram</title>
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="js/ideogram.min.js"></script>
+  <style>
+    body {font: 14px Arial; line-height: 19.6px; padding: 0 15px;}
+    a, a:visited {text-decoration: none;}
+    a:hover {text-decoration: underline;}
+    a, a:hover, a:visited, a:active {color: #0366d6;}
+  </style>
+  <style>
+    li {padding: 2px 0;}
+    input {margin-right: 5px;}
+
+    #gene-type {padding-left: 30px;}
+
+    .note {
+      font-style: italic;
+      padding-left: 10px;
+      clear: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Yeast Ideogram</h1>
+  <div id="container"></div>
+  <div class="note">
+    This visualization is under development.
+  </div>
+  <script type="text/javascript">
+
+  var d3 = Ideogram.d3;
+
+  var config = {
+    container: '#container',
+    orientation: 'vertical',
+    organism: 'saccharomyces-cerevisiae',
+//    assembly: 'GRCh37',
+    chrHeight: 400,
+    chrWidth: 20,
+//    showNonNuclearChromosomes: true,
+    dataDir: 'data/',
+    annotationsPath: 'data/yeast-annots.json',
+    annotationsLayout: 'histogram',
+    barWidth: 3,
+    filterable: true
+  };
+
+  var ideogram = new Ideogram(config);
+  </script>
+</body>
+</html>
+
