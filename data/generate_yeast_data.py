@@ -8,7 +8,10 @@ import json
 import os
 import random
 import re
+import sys
+import pandas
 
+here = os.path.dirname(os.path.abspath(__file__))
 
 def str_to_roman(string):
 
@@ -30,7 +33,7 @@ def str_to_roman(string):
 
 
 def main():
-    with open("SRR562646.json", "r") as fd:
+    with open(os.path.join(here, "SRR562646.json"), "r") as fd:
         data = json.loads(fd.read())
 
     # Each entry at data['annots'] is a dict with {'chr': <chr-number>, 'annots'}
@@ -38,7 +41,7 @@ def main():
     # corresponding to the data['keys']: ['name', 'start', 'length', 'expression-level', 'gene-type']
 
     # metadata about yeast loci
-    with open("SGD_features.tab", "r") as fd:
+    with open(os.path.join(here, "SGD_features.tab"), "r") as fd:
         content = [x.strip("\n").split("\t") for x in fd.readlines() if x]
 
     # Ensure we have correct length
@@ -81,7 +84,6 @@ def main():
         "moderate": 3,
         "low": 2,
         "very-low": 1,
-        "none": 0,
     }
 
     # Gene type for interface lookup
@@ -99,6 +101,18 @@ def main():
         "ARS": 11,
         "long_terminal_repeat": 12,
     }
+
+    # Does the user provide an input file with data (requires pandas)
+    datafile = None
+    df = None
+    if len(sys.argv) > 1:
+        datafile = sys.argv[1]
+        if not os.path.exists(datafile):
+            sys.exit("Datafile %s provided, but does not exist." % datafile)
+        df = pandas.read_csv(datafile, sep="\t")
+        df.columns = ['orf', 'value']
+        df['expression_level'] = pandas.qcut(df['value'], q=len(expression_levels), labels=expression_levels.keys())
+        df.index = df['orf']
 
     # Let's keep counts of feature types
     feature_counts = dict()
@@ -134,7 +148,13 @@ def main():
             continue
 
         gene_type = gene_types[feature]
-        expression_level = random.choice(range(1, 8))
+        if df is not None:
+            if name in df.index:
+                expression_level = expression_levels[df.loc[name]['expression_level']]
+            else:
+                expression_level = 1
+        else:
+            expression_level = random.choice(range(1, 8))
 
         # name, start, length, expression-level, gene-type
         chroms[chromosome].append(
@@ -147,11 +167,13 @@ def main():
         data["annots"].append({"chr": str_to_roman(chrom), "annots": annots})
 
     # Save counts and data to file
-    with open("yeast-annots.json", "w") as fd:
+    annots_file = "yeast-annots.json"
+    if not datafile:
+        annots_file = "yeast-annots-random.json"
+    with open(os.path.join(here, annots_file), "w") as fd:
         fd.write(json.dumps(data, indent=4))
-    with open("features-count.json", "w") as fd:
+    with open(os.path.join(here, "features-count.json"), "w") as fd:
         fd.write(json.dumps(feature_counts, indent=4))
-
     
 
 if __name__ == "__main__":
