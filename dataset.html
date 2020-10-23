@@ -74,12 +74,6 @@
   <ul id="gene-type">
     <h3>Gene type</h3>
     <li>
-      <label for="filter_gene-type_gene-group">
-        <input type="checkbox" id="filter_gene-type_gene-group">Gene Group</input>
-      <span class="count"></span>
-      </label>
-    </li>
-    <li>
       <label for="filter_gene-type_ncRNA-gene">
         <input type="checkbox" id="filter_gene-type_ncRNA-gene">ncRNA</input>
       <span class="count"></span>
@@ -128,27 +122,15 @@
       </label>
     </li>
     <li>
-      <label for="filter_gene-type_ORF">
-        <input type="checkbox" id="filter_gene-type_ORF">ORF</input>
-      <span class="count"></span>
-      </label>
-    </li>
-    <li>
-      <label for="filter_gene-type_ARS">
-        <input type="checkbox" id="filter_gene-type_ARS">ARS</input>
-      <span class="count"></span>
-      </label>
-    </li>
-    <li>
-      <label for="filter_gene-type_long-terminal-repeat">
-        <input type="checkbox" id="filter_gene-type_long-terminal-repeat">long terminal repeat</input>
+      <label for="filter_gene-type_other-type">
+        <input type="checkbox" id="filter_gene-type_other-type">other types</input>
       <span class="count"></span>
       </label>
     </li>
   </ul>
 
   <div class="note">
-    This visualization is from an actual dataset, and is under development.
+    This visualization is from an actual dataset, and is under development. The height of the histogram bars represent the number of annotations.
   </div>
   <script type="text/javascript">
 
@@ -164,18 +146,15 @@
         "none": 0
     },
     'gene-type': {
-        "gene-group": 1,
-        "ncRNA-gene": 2,
-        "pseudogene": 3,
-        "rRNA-gene": 4,
-        "snRNA-gene": 5,
-        "snoRNA-gene": 6,
-        "tRNA-gene": 7,
-        "telomerase-RNA-gene": 8,
-        "transposable-element-gene": 9,
-        "ORF": 10,
-        "ARS": 11,
-        "long-terminal-repeat": 12
+        "ncRNA-gene": 1,
+        "pseudogene": 2,
+        "rRNA-gene": 3,
+        "snRNA-gene": 4,
+        "snoRNA-gene": 5,
+        "tRNA-gene": 6,
+        "telomerase-RNA-gene": 7,
+        "transposable-element-gene": 8,
+        "other-types": 9
     }
   };
 
@@ -220,7 +199,7 @@
 //    assembly: 'GRCh37',
     chrHeight: 390,
     chrWidth: 20,
-//    showNonNuclearChromosomes: true,
+    showNonNuclearChromosomes: true,
     dataDir: 'data/',
     annotationsPath: 'data/yeast-annots.json',
     annotationsLayout: 'histogram',

@@ -62,8 +62,6 @@ def main():
     # line[1] (second entry) is what we use for feature type. We only include a subset
     # for genes
     gene_types = [
-        "ORF",
-        "centromere",
         "gene_group",
         "ncRNA_gene",
         "pseudogene",
@@ -88,18 +86,15 @@ def main():
 
     # Gene type for interface lookup
     gene_types = {
-        "gene_group": 1,
-        "ncRNA_gene": 2,
-        "pseudogene": 3,
-        "rRNA_gene": 4,
-        "snRNA_gene": 5,
-        "snoRNA_gene": 6,
-        "tRNA_gene": 7,
-        "telomerase_RNA_gene": 8,
-        "transposable_element_gene": 9,
-        "ORF": 10,
-        "ARS": 11,
-        "long_terminal_repeat": 12,
+        "ncRNA_gene": 1,
+        "pseudogene": 2,
+        "rRNA_gene": 3,
+        "snRNA_gene": 4,
+        "snoRNA_gene": 5,
+        "tRNA_gene": 6,
+        "telomerase_RNA_gene": 7,
+        "transposable_element_gene": 8,
+        "other-type": 9
     }
 
     # Does the user provide an input file with data (requires pandas)
@@ -132,7 +127,7 @@ def main():
 
         # Only include mappable features, genes
         if feature not in gene_types:
-            continue
+            feature = 'other-type'
 
         # We can't really add unless there is complete information
         if not chromosome or not start or not end or not name:
@@ -149,10 +144,9 @@ def main():
 
         gene_type = gene_types[feature]
         if df is not None:
-            if name in df.index:
-                expression_level = expression_levels[df.loc[name]['expression_level']]
-            else:
-                expression_level = 1
+            if name not in df.index:
+                continue
+            expression_level = expression_levels[df.loc[name]['expression_level']]
         else:
             expression_level = random.choice(range(1, 8))
 
@@ -164,7 +158,11 @@ def main():
     # Parse into data file
     data["annots"] = []
     for chrom, annots in chroms.items():
-        data["annots"].append({"chr": str_to_roman(chrom), "annots": annots})
+        roman = str_to_roman(chrom)
+        if roman == "XVII":
+            print("Warning, chromosome XVII was determined to be the left arm of XIV: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3962479/, updating location.")
+            roman = "XIV"
+        data["annots"].append({"chr": roman, "annots": annots})
 
     # Save counts and data to file
     annots_file = "yeast-annots.json"
